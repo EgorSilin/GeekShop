@@ -11,5 +11,11 @@
         <h5>{{ product.name }}</h5>
         <p>{{ product.price }} руб.</p>
     {% endfor %}
+    {% if promotion %}
+        {% for product in products_of_promotion%}
+            <h5>{{ product.name }}</h5>
+            <p style="color: red">{{ product.price }} руб.</p>
+        {% endfor %}
+    {% endif %}
 </body>
 </html>
