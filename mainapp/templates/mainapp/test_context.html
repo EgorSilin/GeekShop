@@ -7,5 +7,9 @@
 <body>
     <h1>{{ header }}</h1>
     <p>{{ username }}</p>
+    {% for product in products %}
+        <h5>{{ product.name }}</h5>
+        <p>{{ product.price }} руб.</p>
+    {% endfor %}
 </body>
 </html>
