@@ -9,7 +9,7 @@ def index(request):
 
 
 def products(request):
-    with open('./mainapp/fixtures/products.json') as products_data:
+    with open('mainapp/fixtures/products.json') as products_data:
         data = json.load(products_data)
 
     context = {
