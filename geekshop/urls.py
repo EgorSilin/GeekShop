@@ -24,6 +24,7 @@ urlpatterns = [
     path('', index, name='index'),
     path('products/', include('mainapp.urls', namespace='products')),
     # path('products/', products, name='products'),
+    path('auth/', include('authapp.urls', namespace='auth')),
 ]
 
 # check if debug on, it's mean local dev, then add path
