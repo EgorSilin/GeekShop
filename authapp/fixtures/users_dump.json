@@ -23,7 +23,7 @@
     "pk": 2,
     "fields": {
       "password": "pbkdf2_sha256$150000$T7lNqJHkj5uz$p4aCgs10GGflW7y2c8zHjs1gWlUU556MK+L4GncQqgs=",
-      "last_login": "2021-03-10T09:19:36.522Z",
+      "last_login": "2021-03-10T16:27:44.278Z",
       "is_superuser": false,
       "username": "ivan_ivanov",
       "first_name": "Ivan111",
@@ -32,7 +32,7 @@
       "is_staff": false,
       "is_active": true,
       "date_joined": "2021-03-10T05:40:33.423Z",
-      "avatar": "",
+      "avatar": "users_avatar/Deadpool_mobile.jpg",
       "groups": [],
       "user_permissions": []
     }
