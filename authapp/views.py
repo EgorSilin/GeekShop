@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth, messages
 from django.urls import reverse
 from authapp.forms import UserLoginForm, UserCreationForm, UserRegisterForm, UserProfileForm
+from basketapp.models import Basket
 
 
 # Create your views here.
@@ -45,7 +46,8 @@ def profile(request):
     else:
         form = UserProfileForm(instance=request.user)
     context = {
-        'form': form
+        'form': form,
+        'baskets': Basket.objects.all()
     }
     return render(request, 'authapp/profile.html', context)
 
