@@ -61,7 +61,7 @@
     "pk": 4,
     "fields": {
       "password": "pbkdf2_sha256$150000$092Sx8yCyhMo$dQDhAnKqATgdmexd+Ufj6DcSBvxEEJoe5Hv03yQcAF0=",
-      "last_login": null,
+      "last_login": "2021-03-10T12:04:16.093Z",
       "is_superuser": false,
       "username": "egor_egorov",
       "first_name": "egor",
