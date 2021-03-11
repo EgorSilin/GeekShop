@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth, messages
 from django.urls import reverse
-from authapp.forms import UserLoginForm, UserCreationForm, UserRegisterForm
+from authapp.forms import UserLoginForm, UserCreationForm, UserRegisterForm, UserProfileForm
+from basketapp.models import Basket
 
 
 # Create your views here.
@@ -28,6 +29,7 @@ def register(request):
         form = UserRegisterForm(data=request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Вы успешно зарегистрировались!')
             return HttpResponseRedirect(reverse('auth:login'))
     else:
         form = UserRegisterForm()
@@ -35,6 +37,35 @@ def register(request):
     return render(request, 'authapp/register.html', context)
 
 
+def profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('auth:profile'))
+    else:
+        form = UserProfileForm(instance=request.user)
+    baskets = Basket.objects.filter(user=request.user)
+    # v1
+    # total_quantity = 0
+    # total_sum = 0
+    # for basket in baskets:
+    #     total_quantity += basket.quantity
+    #     total_sum += basket.sum()
+    # v2
+    # total_quantity = sum(basket.quantity for basket in baskets)
+    # total_sum = sum(basket.sum() for basket in baskets)
+
+    context = {
+        'form': form,
+        'baskets': baskets,
+        # 'total_quantity': total_quantity,
+        # 'total_sum': total_sum
+    }
+    return render(request, 'authapp/profile.html', context)
+
+
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('index'))
+
