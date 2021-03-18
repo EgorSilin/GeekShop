@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
 from authapp.models import User
-from adminapp.forms import UserAdminRegistrationForm, UserProfileForm, UserAdminProfileForm
+from adminapp.forms import UserAdminRegistrationForm, UserAdminProfileForm
 
 
 # Create your views here.
