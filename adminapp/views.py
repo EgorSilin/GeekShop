@@ -40,12 +40,14 @@ def admin_users_update(request, user_id):
         form = UserAdminProfileForm(instance=user)
     context = {
         'form': form,
+        'user': user,
     }
     return render(request, 'adminapp/admin-users-update-delete.html', context)
 
 
 # DELETE
-def admin_users_delete(request):
-    # return render(request, 'adminapp/admin-users-update-delete.html')
-    pass
+def admin_users_delete(request, user_id):
+    user = User.objects.get(id=user_id)
+    user.delete()
+    return HttpResponseRedirect(reverse('admin_staff:admin_users'))
 
