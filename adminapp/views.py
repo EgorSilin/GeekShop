@@ -1,8 +1,10 @@
 from django.shortcuts import render, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth.decorators import user_passes_test
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView
 from authapp.models import User
 from adminapp.forms import UserAdminRegistrationForm, UserAdminProfileForm
-from django.contrib.auth.decorators import user_passes_test
 
 
 # Create your views here.
@@ -12,24 +14,33 @@ def index(request):
 
 
 # READ
-@user_passes_test(lambda u: u.is_superuser)
-def admin_users(request):
-    context = {'users': User.objects.all()}
-    return render(request, 'adminapp/admin-users-read.html', context)
+# @user_passes_test(lambda u: u.is_superuser)
+# def admin_users(request):
+#     context = {'users': User.objects.all()}
+#     return render(request, 'adminapp/admin-users-read.html', context)
+class UserListView(ListView):
+    model = User
+    template_name = 'adminapp/admin-users-read.html'
+    # queryset = User.objects.filter(is_active=True)
 
 
 # CREATE
-@user_passes_test(lambda u: u.is_superuser)
-def admin_users_create(request):
-    if request.method == 'POST':
-        form = UserAdminRegistrationForm(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admin_staff:admin_users'))
-    else:
-        form = UserAdminRegistrationForm()
-    context = {'form': form}
-    return render(request, 'adminapp/admin-users-create.html', context)
+# @user_passes_test(lambda u: u.is_superuser)
+# def admin_users_create(request):
+#     if request.method == 'POST':
+#         form = UserAdminRegistrationForm(data=request.POST, files=request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect(reverse('admin_staff:admin_users'))
+#     else:
+#         form = UserAdminRegistrationForm()
+#     context = {'form': form}
+#     return render(request, 'adminapp/admin-users-create.html', context)
+class UserCreateView(CreateView):
+    model = User
+    template_name = 'adminapp/admin-users-create.html'
+    form_class = UserAdminRegistrationForm
+    success_url = reverse_lazy('admin_staff:admin_users')
 
 
 # UPDATE
