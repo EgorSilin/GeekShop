@@ -1,8 +1,11 @@
 from django.shortcuts import render, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from authapp.models import User
 from adminapp.forms import UserAdminRegistrationForm, UserAdminProfileForm
-from django.contrib.auth.decorators import user_passes_test
 
 
 # Create your views here.
@@ -12,50 +15,57 @@ def index(request):
 
 
 # READ
-@user_passes_test(lambda u: u.is_superuser)
-def admin_users(request):
-    context = {'users': User.objects.all()}
-    return render(request, 'adminapp/admin-users-read.html', context)
+class UserListView(ListView):
+    model = User
+    template_name = 'adminapp/admin-users-read.html'
+    # queryset = User.objects.filter(is_active=True)
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserListView, self).dispatch(request, *args, **kwargs)
 
 
 # CREATE
-@user_passes_test(lambda u: u.is_superuser)
-def admin_users_create(request):
-    if request.method == 'POST':
-        form = UserAdminRegistrationForm(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admin_staff:admin_users'))
-    else:
-        form = UserAdminRegistrationForm()
-    context = {'form': form}
-    return render(request, 'adminapp/admin-users-create.html', context)
+class UserCreateView(CreateView):
+    model = User
+    template_name = 'adminapp/admin-users-create.html'
+    form_class = UserAdminRegistrationForm
+    success_url = reverse_lazy('admin_staff:admin_users')
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserCreateView, self).dispatch(request, *args, **kwargs)
 
 
 # UPDATE
-@user_passes_test(lambda u: u.is_superuser)
-def admin_users_update(request, user_id):
-    user = User.objects.get(id=user_id)
-    if request.method == 'POST':
-        form = UserAdminProfileForm(data=request.POST, files=request.FILES, instance=user)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admin_staff:admin_users'))
-    else:
-        form = UserAdminProfileForm(instance=user)
-    context = {
-        'form': form,
-        'user': user,
-    }
-    return render(request, 'adminapp/admin-users-update-delete.html', context)
+class UserUpdateView(UpdateView):
+    model = User
+    template_name = 'adminapp/admin-users-update-delete.html'
+    form_class = UserAdminProfileForm
+    success_url = reverse_lazy('admin_staff:admin_users')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserUpdateView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Admins'
+        return context
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserUpdateView, self).dispatch(request, *args, **kwargs)
 
 
 # DELETE
-@user_passes_test(lambda u: u.is_superuser)
-def admin_users_delete(request, user_id):
-    user = User.objects.get(id=user_id)
-    # user.delete()
-    user.is_active = False
-    user.save()
-    return HttpResponseRedirect(reverse('admin_staff:admin_users'))
+class UserDeleteView(DeleteView):
+    model = User
+    template_name = 'adminapp/admin-users-update-delete.html'
+    success_url = reverse_lazy('admin_staff:admin_users')
 
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.is_active = False
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser, login_url='/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserDeleteView, self).dispatch(request, *args, **kwargs)
